@@ -1,0 +1,14 @@
+.git
+.env
+.env.*
+!.env.example
+project_venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+*.sqlite3
+media/
+.github/
+.DS_Store
