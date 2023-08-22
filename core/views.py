@@ -21,8 +21,9 @@ def greetingendpoint(request):
             greeting_text = data.get('greeting', '')
             if not isinstance(greeting_text, str) or not greeting_text.strip():
                 return JsonResponse({'error': 'A nonempty greeting string is required'}, status=400)
+            greeting_text = greeting_text.strip()
 
-            greeting_instance = Greeting.objects.create(greeting=greeting_text)
+            Greeting.objects.create(greeting=greeting_text)
 
             if greeting_text.lower() == 'hello':
                 message = 'Goodbye!'
@@ -44,12 +45,12 @@ def signin(request):
         data = json.loads(request.body.decode('utf-8'))
         if not isinstance(data, dict):
             raise ValueError
-        username = data.get('username')
-        password = data.get('password')
-        if not isinstance(username, str) or not isinstance(password, str) or not username.strip() or not password:
-            raise ValueError
     except (ValueError, UnicodeDecodeError):
         return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    username = data.get('username')
+    password = data.get('password')
+    if not isinstance(username, str) or not isinstance(password, str) or not username.strip() or not password:
+        return JsonResponse({'error': 'username and password are required'}, status=400)
     user = authenticate(request, username=username, password=password)
     if user is None:
         return JsonResponse({'error': 'User did not authenticate'}, status=400)

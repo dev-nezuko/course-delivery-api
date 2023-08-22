@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
 from oauth2_provider.models import AccessToken
+from .models import Greeting
 from .views import create_access_token
 
 class SignInViewTestCase(TestCase):
@@ -29,14 +30,14 @@ class SignInViewTestCase(TestCase):
         response = self.client.post(reverse('signin'), json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data, {'error': 'Invalid JSON data'})
+        self.assertEqual(response_data, {'error': 'username and password are required'})
 
     def test_missing_password(self):
         data = {'username': 'testuser'}
         response = self.client.post(reverse('signin'), json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data, {'error': 'Invalid JSON data'})
+        self.assertEqual(response_data, {'error': 'username and password are required'})
 
 
 
@@ -58,6 +59,12 @@ class SignInViewTestCase(TestCase):
         response=self.client.post(reverse('greetingendpoint'), json.dumps({'greeting':'hello'}), content_type='application/json', HTTP_AUTHORIZATION=f'Bearer {token.token}')
         self.assertEqual(response.status_code,200)
         self.assertEqual(response.json(),{'message':'Goodbye!'})
+
+    def test_padded_hello_still_gets_goodbye(self):
+        token=create_access_token(User.objects.get(username='testuser'))
+        response=self.client.post(reverse('greetingendpoint'), json.dumps({'greeting':'  Hello '}), content_type='application/json', HTTP_AUTHORIZATION=f'Bearer {token.token}')
+        self.assertEqual(response.json(),{'message':'Goodbye!'})
+        self.assertTrue(Greeting.objects.filter(greeting='Hello').exists())
 
     def test_greeting_requires_a_bearer_token(self):
         response=self.client.post(reverse('greetingendpoint'), json.dumps({'greeting':'hello'}), content_type='application/json')
