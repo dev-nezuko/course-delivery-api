@@ -1,14 +1,15 @@
-from django.http import JsonResponse
-from django.contrib.auth import authenticate
 import json
-from oauth2_provider.decorators import protected_resource
-from django.views.decorators.csrf import csrf_exempt
-from .models import Greeting
-from oauthlib.common import generate_token
-from oauth2_provider.models import AccessToken, Application
 from datetime import timedelta
 
+from django.contrib.auth import authenticate
+from django.http import JsonResponse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from oauth2_provider.decorators import protected_resource
+from oauth2_provider.models import AccessToken, Application
+from oauthlib.common import generate_token
+
+from .models import Greeting
 
 
 @csrf_exempt
@@ -67,6 +68,6 @@ def create_access_token(user):
         application=app,
         expires=timezone.now() + timedelta(hours=1),
         token=tok,
-        scope="read write",
+        scope='read write',
     )
     return access_token

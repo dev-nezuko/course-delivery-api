@@ -1,0 +1,16 @@
+[project]
+name = "greeting-api"
+version = "0.1.0"
+description = "Django exercise: credential sign-in, bearer tokens and a protected greeting endpoint"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["project_venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "DJ"]
+
+[tool.ruff.format]
+quote-style = "single"
