@@ -6,8 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Greeting
 from oauthlib.common import generate_token
 from oauth2_provider.models import AccessToken, Application
+from datetime import timedelta
+
 from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 
 
 @csrf_exempt
@@ -64,7 +65,7 @@ def create_access_token(user):
     access_token = AccessToken.objects.create(
         user=user,
         application=app,
-        expires=timezone.now() + relativedelta(hours=1),
+        expires=timezone.now() + timedelta(hours=1),
         token=tok,
         scope="read write",
     )
